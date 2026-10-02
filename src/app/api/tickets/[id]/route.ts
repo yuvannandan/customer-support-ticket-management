@@ -10,6 +10,7 @@ async function getTicketOrForbid(ticketId: string, userId: string, role: string)
       customer: { select: { id: true, name: true, email: true } },
       assignedAgent: { select: { id: true, name: true } },
       messages: {
+        where: { isInternal: false },
         include: { sender: { select: { id: true, name: true, role: true } } },
         orderBy: { createdAt: 'asc' },
       },

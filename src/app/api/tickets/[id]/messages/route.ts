@@ -15,8 +15,14 @@ export async function POST(
   const ticket = await prisma.ticket.findUnique({ where: { id } });
   if (!ticket) return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
 
-  if (user.role === 'CUSTOMER' && ticket.customerId !== user.id) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  if (user.role === 'CUSTOMER') {
+    if (ticket.customerId !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+  } else if (user.role === 'AGENT') {
+    if (ticket.assignedAgentId !== user.id) {
+      return NextResponse.json({ error: 'Forbidden. You must be assigned to this ticket to reply.' }, { status: 403 });
+    }
   }
 
   if (ticket.status === 'CLOSED') {
