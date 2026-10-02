@@ -39,6 +39,10 @@ export async function PUT(
   const ticket = await prisma.ticket.findUnique({ where: { id } });
   if (!ticket) return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
 
+  if (user.role === 'AGENT' && ticket.assignedAgentId !== user.id) {
+    return NextResponse.json({ error: 'Forbidden. You must be assigned to this ticket.' }, { status: 403 });
+  }
+
   if (ticket.status === status) {
     return NextResponse.json({ ticket }, { status: 200 }); // No change
   }

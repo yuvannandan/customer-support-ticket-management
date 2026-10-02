@@ -3,8 +3,11 @@ import { cookies } from 'next/headers'
 import crypto from 'crypto'
 import { prisma } from './prisma'
 
-const SECRET_KEY = process.env.JWT_SECRET || 'super-secret-fallback-key'
-const key = new TextEncoder().encode(SECRET_KEY)
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) {
+  throw new Error('JWT_SECRET environment variable is not configured');
+}
+const key = new TextEncoder().encode(SECRET_KEY);
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.randomBytes(16).toString('hex');

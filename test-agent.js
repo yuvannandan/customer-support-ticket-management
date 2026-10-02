@@ -172,6 +172,25 @@ async function runTests() {
   }, agentCookie);
   assert(unauthReplyRes.status === 403, 'Agent cannot reply to ticket they are not assigned to (403)');
 
+  console.log('\n[9] Agent Unassigned Protections');
+  const unauthStatusRes = await api(`/api/agent/tickets/${unassignedTicketId}/status`, {
+    method: 'PUT',
+    body: JSON.stringify({ status: 'IN_PROGRESS' }),
+  }, agentCookie);
+  assert(unauthStatusRes.status === 403, 'Agent cannot update status on another agent\'s assigned ticket (403)');
+
+  const unauthPriorityRes = await api(`/api/agent/tickets/${unassignedTicketId}/priority`, {
+    method: 'PUT',
+    body: JSON.stringify({ priority: 'URGENT' }),
+  }, agentCookie);
+  assert(unauthPriorityRes.status === 403, 'Agent cannot update priority on another agent\'s assigned ticket (403)');
+
+  const unauthNoteRes = await api(`/api/agent/tickets/${unassignedTicketId}/notes`, {
+    method: 'POST',
+    body: JSON.stringify({ message: 'Sneaky note' }),
+  }, agentCookie);
+  assert(unauthNoteRes.status === 403, 'Agent cannot create an internal note on another agent\'s assigned ticket (403)');
+
   // Summary
   console.log('\n═══════════════════════════════════════');
   console.log(` RESULTS: ${passed} passed / ${passed + failed} total`);
