@@ -2,6 +2,7 @@ import { requireAdmin } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import AdminSidebar from '@/components/AdminSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { EmptyState } from '@/components/UIState';
 import Link from 'next/link';
 
 export const metadata = { title: 'Admin Dashboard — Support Portal' };
@@ -51,7 +52,7 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="dashboard" userName={user.name} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -93,7 +94,11 @@ export default async function AdminDashboardPage() {
               <Link href="/admin/tickets" className="text-sm text-purple-600 hover:underline">View all →</Link>
             </div>
             <div className="divide-y divide-gray-50">
-              {recentTickets.map(t => (
+              {recentTickets.length === 0 ? (
+                <div className="p-4">
+                  <EmptyState icon="🎫" title="No tickets" description="No tickets have been created yet." />
+                </div>
+              ) : recentTickets.map(t => (
                 <div key={t.id} className="flex items-center justify-between px-6 py-4">
                   <div>
                     <Link href={`/admin/tickets/${t.id}`} className="font-medium text-gray-900 text-sm hover:text-purple-600 hover:underline">
@@ -119,7 +124,11 @@ export default async function AdminDashboardPage() {
               <Link href="/admin/users" className="text-sm text-purple-600 hover:underline">View all →</Link>
             </div>
             <div className="divide-y divide-gray-50">
-              {recentUsers.map(u => (
+              {recentUsers.length === 0 ? (
+                <div className="p-4">
+                  <EmptyState icon="👥" title="No users" description="No users have registered yet." />
+                </div>
+              ) : recentUsers.map(u => (
                 <div key={u.id} className="flex items-center justify-between px-6 py-4">
                   <div>
                     <div className="font-medium text-gray-900 text-sm">{u.name}</div>

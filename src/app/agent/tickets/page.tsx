@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import AgentSidebar from '@/components/AgentSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, EmptyState, ErrorAlert } from '@/components/UIState';
 
 interface Ticket {
   id: string;
@@ -69,7 +70,7 @@ export default function AgentTicketsPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AgentSidebar active="tickets" userName={userName || 'Agent'} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -125,21 +126,27 @@ export default function AgentTicketsPage() {
         {/* Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center text-gray-400">
-              <div className="animate-spin text-4xl mb-3">⏳</div>
-              <p>Loading tickets...</p>
+            <div className="p-6">
+              <Skeleton className="h-10 w-full mb-4" />
+              <div className="divide-y divide-gray-50">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
             </div>
           ) : error ? (
-            <div className="p-10 text-center">
-              <p className="text-red-600 font-medium">{error}</p>
-              <button onClick={fetchTickets} className="mt-3 text-sm text-green-600 hover:underline">Retry</button>
+            <div className="p-6">
+              <ErrorAlert title="Failed to load tickets" message={error} />
+              <button onClick={fetchTickets} className="text-sm text-green-600 hover:underline">Retry</button>
             </div>
           ) : tickets.length === 0 ? (
-            <div className="p-14 text-center text-gray-400">
-              <div className="text-5xl mb-4">🎫</div>
-              <p className="font-semibold text-lg">No tickets found.</p>
-              <p className="text-sm mt-1">Try adjusting your filters or search query.</p>
-            </div>
+            <EmptyState 
+              icon="🎫" 
+              title="No tickets found" 
+              description="Try adjusting your filters or search query." 
+            />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

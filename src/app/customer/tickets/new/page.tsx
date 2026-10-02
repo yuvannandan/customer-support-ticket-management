@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CustomerSidebar from '@/components/CustomerSidebar';
+import { ErrorAlert } from '@/components/UIState';
 
 interface Category {
   id: string;
@@ -80,7 +81,7 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <CustomerSidebar active="new-ticket" userName={userName || 'Customer'} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -96,11 +97,7 @@ export default function CreateTicketPage() {
             </div>
           )}
 
-          {error && (
-            <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {error}
-            </div>
-          )}
+          {error && <ErrorAlert message={error} />}
 
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
             <form onSubmit={handleSubmit} className="space-y-6">

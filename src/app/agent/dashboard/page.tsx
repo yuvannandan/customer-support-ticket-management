@@ -2,6 +2,7 @@ import { requireRole } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import AgentSidebar from '@/components/AgentSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { EmptyState } from '@/components/UIState';
 import Link from 'next/link';
 
 export const metadata = {
@@ -45,7 +46,7 @@ export default async function AgentDashboard() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AgentSidebar active="dashboard" userName={user.name} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -76,9 +77,12 @@ export default async function AgentDashboard() {
           </div>
 
           {recent.length === 0 ? (
-            <div className="p-10 text-center text-gray-400">
-              <div className="text-4xl mb-3">🎫</div>
-              <p className="font-medium">No tickets</p>
+            <div className="p-6">
+              <EmptyState 
+                icon="🎫" 
+                title="No tickets" 
+                description="There are currently no tickets in your queue." 
+              />
             </div>
           ) : (
             <div className="divide-y divide-gray-50">

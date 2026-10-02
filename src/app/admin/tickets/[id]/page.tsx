@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, ErrorAlert } from '@/components/UIState';
 
 interface Msg { id: string; message: string; isInternal: boolean; createdAt: string; sender: { name: string; role: string }; }
 interface Act { id: string; action: string; oldValue: string | null; newValue: string | null; createdAt: string; user: { name: string }; }
@@ -60,24 +61,46 @@ export default function AdminTicketDetailPage({ params }: { params: Promise<{ id
   const handleAssign = (agentId: string) => patch('assign', { agentId: agentId || null });
 
   if (loading) return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="tickets" userName={userName || 'Admin'} />
-      <main className="flex-1 p-8 flex items-center justify-center text-gray-400 animate-pulse">Loading ticket…</main>
+      <main className="flex-1 p-8">
+        <div className="mb-6">
+          <Skeleton className="h-8 w-1/3 mb-2" />
+          <Skeleton className="h-4 w-1/4" />
+        </div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="xl:col-span-2">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-4">
+              <Skeleton className="h-6 w-32 mb-6" />
+              <SkeletonRow />
+              <SkeletonRow />
+            </div>
+          </div>
+          <div>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <Skeleton className="h-6 w-32 mb-6" />
+              <Skeleton className="h-4 w-full mb-3" />
+              <Skeleton className="h-4 w-full mb-3" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 
   if (error || !ticket) return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="tickets" userName={userName || 'Admin'} />
-      <main className="flex-1 p-8 flex flex-col items-center justify-center">
-        <p className="text-red-600 font-medium mb-4">{error || 'Ticket not found'}</p>
-        <Link href="/admin/tickets" className="text-purple-600 hover:underline text-sm">← Back</Link>
+      <main className="flex-1 p-8 max-w-2xl">
+        <ErrorAlert title="Failed to load ticket" message={error || 'Ticket not found'} />
+        <Link href="/admin/tickets" className="text-purple-600 hover:underline text-sm font-medium">← Back to tickets</Link>
       </main>
     </div>
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="tickets" userName={userName || 'Admin'} />
       <main className="flex-1 p-8 overflow-auto">
 
@@ -116,9 +139,9 @@ export default function AdminTicketDetailPage({ params }: { params: Promise<{ id
                         {m.isInternal && <span className="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 rounded font-bold uppercase">Internal Note</span>}
                       </div>
                       <div className={`px-4 py-3 rounded-2xl text-sm ${
-                        m.isInternal ? 'bg-yellow-50 border border-yellow-200 text-gray-800' :
-                        m.sender.role === 'CUSTOMER' ? 'bg-blue-50 border border-blue-100 text-gray-800' :
-                        'bg-purple-600 text-white'
+                        m.isInternal ? 'bg-yellow-50 border border-yellow-200 text-gray-800 self-start rounded-bl-sm' :
+                        m.sender.role === 'CUSTOMER' ? 'bg-blue-50 border border-blue-100 text-gray-800 self-start rounded-bl-sm' :
+                        'bg-purple-600 text-white self-end rounded-br-sm'
                       }`}>{m.message}</div>
                       <span className="text-xs text-gray-400 mt-1">{fmt(m.createdAt)}</span>
                     </div>

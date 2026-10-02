@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import AgentSidebar from '@/components/AgentSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, ErrorAlert } from '@/components/UIState';
 import Link from 'next/link';
 
 interface Message {
@@ -164,10 +165,30 @@ export default function AgentTicketDetailPage({ params }: { params: Promise<{ id
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
         <AgentSidebar active="tickets" userName={userName || 'Agent'} />
-        <main className="flex-1 p-8 flex items-center justify-center">
-          <div className="text-gray-400 text-center animate-pulse">Loading ticket...</div>
+        <main className="flex-1 p-8">
+          <div className="mb-6">
+            <Skeleton className="h-8 w-1/3 mb-2" />
+            <Skeleton className="h-4 w-1/4" />
+          </div>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-4">
+                <Skeleton className="h-6 w-32 mb-6" />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </div>
+            <div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <Skeleton className="h-6 w-32 mb-6" />
+                <Skeleton className="h-4 w-full mb-3" />
+                <Skeleton className="h-4 w-full mb-3" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     );
@@ -175,11 +196,11 @@ export default function AgentTicketDetailPage({ params }: { params: Promise<{ id
 
   if (error || !ticket) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
         <AgentSidebar active="tickets" userName={userName || 'Agent'} />
-        <main className="flex-1 p-8 flex flex-col items-center justify-center">
-          <div className="text-red-600 font-medium text-lg mb-4">{error || 'Ticket not found'}</div>
-          <Link href="/agent/tickets" className="text-green-600 hover:underline">← Back to tickets</Link>
+        <main className="flex-1 p-8 max-w-2xl">
+          <ErrorAlert title="Failed to load ticket" message={error || 'Ticket not found'} />
+          <Link href="/agent/tickets" className="text-green-600 hover:underline text-sm font-medium">← Back to tickets</Link>
         </main>
       </div>
     );
@@ -189,7 +210,7 @@ export default function AgentTicketDetailPage({ params }: { params: Promise<{ id
   const canReply = isAssignedToMe || ticket.status === 'CLOSED'; // (will be blocked if closed anyway, but let the form render or hide properly)
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AgentSidebar active="tickets" userName={userName || 'Agent'} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -253,10 +274,10 @@ export default function AgentTicketDetailPage({ params }: { params: Promise<{ id
                           {isSystemOrInternal && <span className="text-[10px] bg-yellow-100 text-yellow-800 px-1.5 rounded uppercase font-bold">Internal Note</span>}
                         </div>
                         <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                          isSystemOrInternal ? 'bg-yellow-50 border border-yellow-200 text-gray-800' :
-                          isOwn ? 'bg-green-600 text-white' : 
-                          isCustomer ? 'bg-blue-50 border border-blue-100 text-gray-800' :
-                          'bg-gray-100 text-gray-800'
+                          isSystemOrInternal ? 'bg-yellow-50 border border-yellow-200 text-gray-800 self-start rounded-bl-sm' :
+                          isOwn ? 'bg-green-600 text-white self-end rounded-br-sm' : 
+                          isCustomer ? 'bg-blue-50 border border-blue-100 text-gray-800 self-start rounded-bl-sm' :
+                          'bg-gray-100 text-gray-800 self-start rounded-bl-sm'
                         }`}>
                           {msg.message}
                         </div>

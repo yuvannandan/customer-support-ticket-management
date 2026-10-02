@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import CustomerSidebar from '@/components/CustomerSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, ErrorAlert } from '@/components/UIState';
 import Link from 'next/link';
 
 interface Message {
@@ -44,9 +45,9 @@ function getRoleLabel(role: string) {
 }
 
 function getRoleBubbleStyle(role: string, isCurrentUser: boolean) {
-  if (isCurrentUser) return 'bg-blue-600 text-white self-end';
-  if (role === 'AGENT' || role === 'ADMIN') return 'bg-green-50 border border-green-200 text-gray-900 self-start';
-  return 'bg-gray-100 text-gray-900 self-start';
+  if (isCurrentUser) return 'bg-blue-600 text-white self-end rounded-br-sm';
+  if (role === 'AGENT' || role === 'ADMIN') return 'bg-green-50 border border-green-200 text-gray-900 self-start rounded-bl-sm';
+  return 'bg-gray-100 text-gray-900 self-start rounded-bl-sm';
 }
 
 export default function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -134,12 +135,29 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
         <CustomerSidebar active="tickets" userName={userName || 'Customer'} />
-        <main className="flex-1 p-8 flex items-center justify-center">
-          <div className="text-gray-400 text-center">
-            <div className="text-4xl mb-3 animate-spin">⏳</div>
-            <p>Loading ticket...</p>
+        <main className="flex-1 p-8">
+          <div className="mb-6">
+            <Skeleton className="h-8 w-1/3 mb-2" />
+            <Skeleton className="h-4 w-1/4" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-4">
+                <Skeleton className="h-6 w-32 mb-6" />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </div>
+            <div>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <Skeleton className="h-6 w-32 mb-6" />
+                <Skeleton className="h-4 w-full mb-3" />
+                <Skeleton className="h-4 w-full mb-3" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -148,16 +166,13 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
   if (error || !ticket) {
     return (
-      <div className="flex min-h-screen bg-gray-100">
+      <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
         <CustomerSidebar active="tickets" userName={userName || 'Customer'} />
-        <main className="flex-1 p-8 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-4xl mb-3">⚠️</div>
-            <p className="text-red-600 font-medium">{error || 'Ticket not found'}</p>
-            <Link href="/customer/tickets" className="mt-4 inline-block text-blue-600 hover:underline text-sm">
-              ← Back to My Tickets
-            </Link>
-          </div>
+        <main className="flex-1 p-8 max-w-2xl">
+          <ErrorAlert title="Failed to load ticket" message={error || 'Ticket not found'} />
+          <Link href="/customer/tickets" className="text-blue-600 hover:underline text-sm font-medium">
+            ← Back to My Tickets
+          </Link>
         </main>
       </div>
     );
@@ -166,7 +181,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   const isClosed = ticket.status === 'CLOSED';
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <CustomerSidebar active="tickets" userName={userName || 'Customer'} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -195,9 +210,9 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Conversation */}
-          <div className="col-span-2 flex flex-col gap-4">
+          <div className="lg:col-span-2 flex flex-col gap-4">
             {/* Original description */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Original Request</h2>

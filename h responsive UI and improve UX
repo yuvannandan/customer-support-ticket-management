@@ -1,0 +1,31 @@
+warning: in the working copy of 'src/app/admin/categories/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/admin/dashboard/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/admin/tickets/[id]/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/admin/tickets/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/admin/users/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/agent/dashboard/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/agent/tickets/[id]/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/agent/tickets/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/customer/dashboard/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/customer/tickets/[id]/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/customer/tickets/new/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/app/customer/tickets/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/AdminSidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/AgentSidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/CustomerSidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+ src/app/admin/categories/page.tsx      |  27 [32m+++++++[m[31m--[m
+ src/app/admin/dashboard/page.tsx       |  15 [32m++++[m[31m-[m
+ src/app/admin/tickets/[id]/page.tsx    |  43 [32m++++++++++[m[31m----[m
+ src/app/admin/tickets/page.tsx         |  25 [32m++++++[m[31m--[m
+ src/app/admin/users/page.tsx           |  27 [32m+++++++[m[31m--[m
+ src/app/agent/dashboard/page.tsx       |  12 [32m++[m[31m--[m
+ src/app/agent/tickets/[id]/page.tsx    |  45 [32m++++++++++[m[31m----[m
+ src/app/agent/tickets/page.tsx         |  31 [32m++++++[m[31m----[m
+ src/app/customer/dashboard/page.tsx    |  13 [32m+++[m[31m--[m
+ src/app/customer/tickets/[id]/page.tsx |  55 [32m++++++++++[m[31m-------[m
+ src/app/customer/tickets/new/page.tsx  |   9 [32m+[m[31m--[m
+ src/app/customer/tickets/page.tsx      |  45 [32m++++++++[m[31m------[m
+ src/components/AdminSidebar.tsx        |  97 [32m++++++++++++++++++++[m[31m----------[m
+ src/components/AgentSidebar.tsx        | 104 [32m++++++++++++++++++++++[m[31m-----------[m
+ src/components/CustomerSidebar.tsx     | 104 [32m++++++++++++++++++++++[m[31m-----------[m
+ 15 files changed, 449 insertions(+), 203 deletions(-)

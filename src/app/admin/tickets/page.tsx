@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, EmptyState, ErrorAlert } from '@/components/UIState';
 
 interface Ticket {
   id: string; ticketNumber: string; title: string; status: string; priority: string;
@@ -49,7 +50,7 @@ export default function AdminTicketsPage() {
   const fmt = (d: string) => new Date(d).toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' });
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="tickets" userName={userName || 'Admin'} />
       <main className="flex-1 p-8 overflow-auto">
         <div className="mb-6">
@@ -85,11 +86,27 @@ export default function AdminTicketsPage() {
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center text-gray-400 animate-pulse">Loading tickets…</div>
+            <div className="p-6">
+              <Skeleton className="h-10 w-full mb-4" />
+              <div className="divide-y divide-gray-50">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </div>
           ) : error ? (
-            <div className="p-10 text-center text-red-600">{error}</div>
+            <div className="p-6">
+              <ErrorAlert title="Failed to load tickets" message={error} />
+              <button onClick={fetchTickets} className="text-sm text-purple-600 hover:underline">Retry</button>
+            </div>
           ) : tickets.length === 0 ? (
-            <div className="p-14 text-center text-gray-400">No tickets found.</div>
+            <EmptyState 
+              icon="🎫" 
+              title="No tickets found" 
+              description="Try adjusting your filters or search query." 
+            />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

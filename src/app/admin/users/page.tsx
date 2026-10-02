@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import AdminSidebar from '@/components/AdminSidebar';
+import { Skeleton, SkeletonRow, EmptyState, ErrorAlert } from '@/components/UIState';
 
 interface User { id: string; name: string; email: string; role: string; createdAt: string; }
 
@@ -96,7 +97,7 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="users" userName={me?.name || 'Admin'} />
       <main className="flex-1 p-8 overflow-auto">
 
@@ -133,11 +134,27 @@ export default function AdminUsersPage() {
         {/* Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-10 text-center text-gray-400 text-sm">Loading…</div>
+            <div className="p-6">
+              <Skeleton className="h-10 w-full mb-4" />
+              <div className="divide-y divide-gray-50">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </div>
           ) : error ? (
-            <div className="p-10 text-center text-red-600 text-sm">{error}</div>
+            <div className="p-6">
+              <ErrorAlert title="Failed to load users" message={error} />
+              <button onClick={fetchUsers} className="text-sm text-purple-600 hover:underline">Retry</button>
+            </div>
           ) : users.length === 0 ? (
-            <div className="p-10 text-center text-gray-400 text-sm">No users found.</div>
+            <EmptyState 
+              icon="👥" 
+              title="No users found" 
+              description="Try adjusting your filters or create a new user." 
+            />
           ) : (
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -175,7 +192,7 @@ export default function AdminUsersPage() {
                 <h3 className="text-lg font-bold text-gray-900">{mode === 'create' ? 'Create New User' : 'Edit User'}</h3>
               </div>
               <form onSubmit={handleSave} className="p-6 space-y-4">
-                {fErr && <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-3">{fErr}</div>}
+                {fErr && <ErrorAlert message={fErr} />}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
                   <input required type="text" value={fName} onChange={e => setFName(e.target.value)}

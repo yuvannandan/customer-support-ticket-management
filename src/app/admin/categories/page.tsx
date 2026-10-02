@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import AdminSidebar from '@/components/AdminSidebar';
+import { Skeleton, SkeletonRow, EmptyState, ErrorAlert } from '@/components/UIState';
 
 interface Category { id: string; name: string; description: string | null; _count: { tickets: number }; updatedAt: string; }
 
@@ -74,7 +75,7 @@ export default function AdminCategoriesPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <AdminSidebar active="categories" userName={userName || 'Admin'} />
       <main className="flex-1 p-8 overflow-auto">
 
@@ -90,11 +91,27 @@ export default function AdminCategoriesPage() {
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-10 text-center text-gray-400 text-sm">Loading…</div>
+            <div className="p-6">
+              <Skeleton className="h-10 w-full mb-4" />
+              <div className="divide-y divide-gray-50">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
+            </div>
           ) : error ? (
-            <div className="p-10 text-center text-red-600 text-sm">{error}</div>
+            <div className="p-6">
+              <ErrorAlert title="Failed to load categories" message={error} />
+              <button onClick={load} className="text-sm text-purple-600 hover:underline">Retry</button>
+            </div>
           ) : cats.length === 0 ? (
-            <div className="p-10 text-center text-gray-400 text-sm">No categories found.</div>
+            <EmptyState 
+              icon="🏷️" 
+              title="No categories" 
+              description="Create a category to help organize tickets." 
+            />
           ) : (
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
@@ -137,7 +154,7 @@ export default function AdminCategoriesPage() {
                 <h3 className="text-lg font-bold text-gray-900">{mode === 'create' ? 'Add Category' : 'Edit Category'}</h3>
               </div>
               <form onSubmit={handleSave} className="p-6 space-y-4">
-                {fErr && <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-3">{fErr}</div>}
+                {fErr && <ErrorAlert message={fErr} />}
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Category Name</label>
                   <input required type="text" value={fName} onChange={e => setFName(e.target.value)}

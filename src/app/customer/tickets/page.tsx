@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CustomerSidebar from '@/components/CustomerSidebar';
 import { StatusBadge, PriorityBadge } from '@/components/Badges';
+import { Skeleton, SkeletonRow, EmptyState, ErrorAlert } from '@/components/UIState';
 
 interface Ticket {
   id: string;
@@ -66,7 +67,7 @@ export default function MyTicketsPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
       <CustomerSidebar active="tickets" userName={userName || 'Customer'} />
 
       <main className="flex-1 p-8 overflow-auto">
@@ -121,27 +122,35 @@ export default function MyTicketsPage() {
         {/* Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center text-gray-400">
-              <div className="animate-spin text-4xl mb-3">⏳</div>
-              <p>Loading your tickets...</p>
+            <div className="p-6">
+              <Skeleton className="h-10 w-full mb-4" />
+              <div className="divide-y divide-gray-50">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+              </div>
             </div>
           ) : error ? (
-            <div className="p-10 text-center">
-              <p className="text-red-600 font-medium">{error}</p>
-              <button onClick={fetchTickets} className="mt-3 text-sm text-blue-600 hover:underline">Retry</button>
+            <div className="p-6">
+              <ErrorAlert title="Failed to load tickets" message={error} />
+              <button onClick={fetchTickets} className="text-sm text-blue-600 hover:underline">Retry</button>
             </div>
           ) : tickets.length === 0 ? (
-            <div className="p-14 text-center text-gray-400">
-              <div className="text-5xl mb-4">🎫</div>
-              <p className="font-semibold text-lg">No support tickets yet.</p>
-              <p className="text-sm mt-1">Create your first ticket to get help from our team.</p>
-              <Link
-                href="/customer/tickets/new"
-                className="mt-5 inline-block px-5 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
-              >
-                Create Ticket
-              </Link>
-            </div>
+            <EmptyState 
+              icon="🎫" 
+              title="No support tickets yet" 
+              description="Create your first ticket to get help from our team."
+              action={
+                <Link
+                  href="/customer/tickets/new"
+                  className="mt-5 inline-block px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Create Ticket
+                </Link>
+              }
+            />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
