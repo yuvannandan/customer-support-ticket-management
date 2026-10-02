@@ -1,0 +1,52 @@
+import Link from 'next/link';
+import LogoutButton from './LogoutButton';
+
+interface AdminSidebarProps {
+  active?: 'dashboard' | 'users' | 'tickets' | 'categories';
+  userName: string;
+}
+
+const navItems = [
+  { href: '/admin/dashboard', label: 'Dashboard', key: 'dashboard', icon: '📊' },
+  { href: '/admin/users',     label: 'Users',     key: 'users',     icon: '👥' },
+  { href: '/admin/tickets',   label: 'All Tickets', key: 'tickets', icon: '🎫' },
+  { href: '/admin/categories',label: 'Categories', key: 'categories',icon: '🏷️' },
+];
+
+export default function AdminSidebar({ active, userName }: AdminSidebarProps) {
+  return (
+    <aside className="w-64 min-h-screen bg-gray-900 text-white flex flex-col shrink-0">
+      <div className="p-6 border-b border-gray-700">
+        <div className="text-lg font-bold text-white">Support Portal</div>
+        <div className="text-sm text-gray-400 mt-1 truncate">{userName}</div>
+        <span className="mt-2 inline-block text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full">
+          Administrator
+        </span>
+      </div>
+
+      <nav className="flex-1 p-4 space-y-1">
+        {navItems.map((item) => {
+          const isActive = active === item.key;
+          return (
+            <Link
+              key={item.key}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+              }`}
+            >
+              <span>{item.icon}</span>
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-gray-700">
+        <LogoutButton />
+      </div>
+    </aside>
+  );
+}
