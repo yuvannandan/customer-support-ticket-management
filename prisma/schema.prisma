@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// enum Role {
+//   CUSTOMER
+//   AGENT
+//   ADMIN
+// }
+
+// enum TicketStatus {
+//   OPEN
+//   ASSIGNED
+//   IN_PROGRESS
+//   WAITING_FOR_CUSTOMER
+//   RESOLVED
+//   CLOSED
+//   REOPENED
+// }
+
+// enum TicketPriority {
+//   LOW
+//   MEDIUM
+//   HIGH
+//   URGENT
+// }
+
+model User {
+  id             String          @id @default(uuid())
+  name           String
+  email          String          @unique
+  passwordHash   String
+  role           String          @default("CUSTOMER")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  tickets        Ticket[]        @relation("CustomerTickets")
+  assignedTickets Ticket[]       @relation("AgentTickets")
+  messages       TicketMessage[] @relation("UserMessages")
+  activities     TicketActivity[] @relation("UserActivities")
+
+  @@index([email])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tickets     Ticket[]
+}
+
+model Ticket {
+  id              String         @id @default(uuid())
+  ticketNumber    String         @unique
+  title           String
+  description     String
+  customerId      String
+  assignedAgentId String?
+  categoryId      String
+  priority        String         @default("MEDIUM")
+  status          String         @default("OPEN")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  resolvedAt      DateTime?
+  closedAt        DateTime?
+
+  customer        User             @relation("CustomerTickets", fields: [customerId], references: [id])
+  assignedAgent   User?            @relation("AgentTickets", fields: [assignedAgentId], references: [id])
+  category        Category         @relation(fields: [categoryId], references: [id])
+  messages        TicketMessage[]  @relation("TicketMessages")
+  activities      TicketActivity[] @relation("TicketActivities")
+
+  @@index([ticketNumber])
+  @@index([status])
+  @@index([priority])
+  @@index([customerId])
+  @@index([assignedAgentId])
+  @@index([categoryId])
+}
+
+model TicketMessage {
+  id        String   @id @default(uuid())
+  ticketId  String
+  senderId  String
+  message   String
+  createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation("TicketMessages", fields: [ticketId], references: [id], onDelete: Cascade)
+  sender    User     @relation("UserMessages", fields: [senderId], references: [id])
+}
+
+model TicketActivity {
+  id        String   @id @default(uuid())
+  ticketId  String
+  userId    String
+  action    String
+  oldValue  String?
+  newValue  String?
+  createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation("TicketActivities", fields: [ticketId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserActivities", fields: [userId], references: [id])
+}
